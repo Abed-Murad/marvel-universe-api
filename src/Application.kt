@@ -8,7 +8,12 @@ import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
+import io.ktor.http.content.default
+import io.ktor.http.content.file
+import io.ktor.http.content.files
+import io.ktor.http.content.static
 import io.ktor.jackson.*
+import java.io.File
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -27,7 +32,6 @@ fun Application.module(testing: Boolean = false) {
     }
 
     install(Authentication) {
-
     }
 
     install(ContentNegotiation) {
@@ -37,13 +41,11 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
+
         get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+            call.respondFile(File("resources/heroes_data.json"))
         }
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
-        }
     }
 }
 
