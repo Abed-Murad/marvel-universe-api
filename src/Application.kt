@@ -32,6 +32,7 @@ fun Application.module(testing: Boolean = false) {
     }
 
     install(Authentication) {
+
     }
 
     install(ContentNegotiation) {
@@ -42,9 +43,14 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
 
-        get("/") {
-            call.respondFile(File("resources/heroes_data.json"))
+
+        route("v1/public"){
+            get("/heroes") {
+                call.respondFile(File("resources/heroes_data.json"))
+            }
+
         }
+
 
     }
 }
