@@ -15,7 +15,7 @@ class HeroService {
         Heroes.selectAll().map { toHero(it) }
     }
 
-    suspend fun addHero(hero: NewHero) {
+    suspend fun addHero(hero: NewHero): Int {
         var key = 0
         dbQuery {
             key = (Heroes.insert {
@@ -25,6 +25,8 @@ class HeroService {
                 it[poster] = hero.poster
             } get Heroes.id)
         }
+
+        return key
     }
 
 
