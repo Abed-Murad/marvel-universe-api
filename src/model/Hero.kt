@@ -4,9 +4,9 @@ import org.jetbrains.exposed.sql.Table
 
 object Heroes : Table() {
     val id = integer("id").autoIncrement()
-    val name = varchar("name", 255)
+    val name = varchar("name", 50)
     val quote = varchar("quote", 255)
-    val color = varchar("color", 255)
+    val color = varchar("color", 50)
     val poster = varchar("poster", 255)
     override val primaryKey = PrimaryKey(id)
 }
