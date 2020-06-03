@@ -7,6 +7,9 @@ import marvel_universe_api.service.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import java.sql.DriverManager
+import java.sql.SQLException
+import java.util.*
 
 class HeroService {
 
@@ -14,6 +17,11 @@ class HeroService {
     suspend fun getAllWidgets(): List<Hero> = dbQuery {
         Heroes.selectAll().map { toHero(it) }
     }
+
+
+
+
+
 
     suspend fun addHero(hero: NewHero): Int {
         var key = 0

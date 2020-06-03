@@ -12,6 +12,8 @@ import marvel_universe_api.service.DatabaseFactory
 import marvel_universe_api.service.HeroService
 import marvel_universe_api.web.hero
 import java.io.File
+import java.sql.*
+import java.util.*
 
 
 @Suppress("unused") // Referenced in application.conf
@@ -47,6 +49,12 @@ fun Application.module(testing: Boolean = false) {
         hero(heroService)
     }
 
+
+
 }
+
+
+
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
