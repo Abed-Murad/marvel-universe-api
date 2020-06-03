@@ -8,9 +8,11 @@ import io.ktor.http.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
 import io.ktor.jackson.*
+import marvel_universe_api.service.DatabaseFactory
+import marvel_universe_api.service.HeroService
+import marvel_universe_api.web.hero
 import java.io.File
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -32,21 +34,19 @@ fun Application.module(testing: Boolean = false) {
 
     install(ContentNegotiation) {
         jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
+            configure(SerializationFeature.INDENT_OUTPUT, true)
         }
     }
 
-    routing {
+    DatabaseFactory.init()
+
+    val heroService = HeroService()
 
 
-        route("v1/public"){
-            get("/heroes") {
-                call.respondFile(File("resources/heroes_data.json"))
-            }
-
-        }
-
-
+    install(Routing) {
+        hero(heroService)
     }
+
 }
 
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
