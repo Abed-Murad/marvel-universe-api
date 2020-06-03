@@ -1,17 +1,12 @@
-package MarvelUniverseAPI
+package marvel_universe_api
 
 import io.ktor.application.*
 import io.ktor.response.*
-import io.ktor.request.*
 import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
-import io.ktor.http.content.default
-import io.ktor.http.content.file
-import io.ktor.http.content.files
-import io.ktor.http.content.static
 import io.ktor.jackson.*
 import java.io.File
 
