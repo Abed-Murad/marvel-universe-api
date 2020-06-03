@@ -18,15 +18,10 @@ fun Route.hero(heroService: HeroService) {
     route("v1/public") {
 
         get("/heroes") {
-            call.respondFile(File("resources/heroes_data.json"))
-        }
-
-        get("/") {
             call.respond(heroService.getAllWidgets())
         }
 
-
-        post("/") {
+        post("/heroes") {
             val widget = call.receive<NewHero>()
             call.respond(HttpStatusCode.Created, heroService.addHero(widget))
         }
