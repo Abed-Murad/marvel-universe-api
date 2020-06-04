@@ -14,16 +14,18 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.response.respondText
 import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import marvel_universe_api.HeroMovies.heroes_id
+import marvel_universe_api.HeroMovies.movies_id
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.ArrayList
 
 
-@Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     install(CORS) {
@@ -47,8 +49,19 @@ fun Application.module(testing: Boolean = false) {
 
     embeddedServer(Netty, 8080) {
         routing {
-            get("/") {
-                call.respondText(getAllHeroes(), ContentType.Application.Json)
+            route("v1/public") {
+                get("/heroes") {
+                    call.respondText(getAllHeroes(), ContentType.Application.Json)
+                }
+
+                get("/movies") {
+                    call.respondText(getAllMovies(), ContentType.Application.Json)
+                }
+
+                get("/heroes-movies") {
+                    call.respondText(getAllHeroesMovies(), ContentType.Application.Json)
+                }
+
             }
         }
     }.start(wait = true)
@@ -70,9 +83,47 @@ fun getAllHeroes(): String {
                 )
             )
         }
-        json = Gson().toJson(c);
+        json = Gson().toJson(c)
     }
     return json
+}
+
+fun getAllMovies(): String {
+    var movies: String = ""
+    transaction {
+        val res = Movies.selectAll()
+        val c = ArrayList<Movie>()
+        for (f in res) {
+            c.add(
+                Movie(
+                    id = f[Movies.id],
+                    name = f[Movies.name],
+                    date = f[Movies.date],
+                    poster = f[Heroes.poster]
+                )
+            )
+        }
+        movies = Gson().toJson(c)
+    }
+    return movies
+}
+
+fun getAllHeroesMovies(): String {
+    var movies: String = ""
+    transaction {
+        val res = HeroMovies.selectAll()
+        val c = ArrayList<HeroMovie>()
+        for (f in res) {
+            c.add(
+                HeroMovie(
+                    heroes_id = f[HeroMovies.heroes_id],
+                    movies_id = f[HeroMovies.movies_id]
+                )
+            )
+        }
+        movies = Gson().toJson(c)
+    }
+    return movies
 }
 
 
