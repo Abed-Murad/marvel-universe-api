@@ -39,7 +39,7 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     implementation "com.h2database:h2:1.4.200"
     implementation 'com.zaxxer:HikariCP:3.4.2'
-
+    implementation "io.ktor:ktor-gson:$ktor_version"
     compile "org.jetbrains.exposed:exposed-core:0.23.1"
     compile "org.jetbrains.exposed:exposed-jdbc:0.23.1"
     compile 'mysql:mysql-connector-java:8.0.20'
