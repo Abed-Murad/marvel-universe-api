@@ -1,5 +1,6 @@
 package marvel_universe_api
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -10,19 +11,16 @@ import io.ktor.gson.GsonConverter
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpHeaders.Authorization
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpMethod.Companion.Delete
-import io.ktor.http.HttpMethod.Companion.Options
-import io.ktor.http.HttpMethod.Companion.Patch
-import io.ktor.http.HttpMethod.Companion.Put
-import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import java.text.DateFormat
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.ArrayList
 
 
 @Suppress("unused") // Referenced in application.conf
@@ -41,24 +39,52 @@ fun Application.module(testing: Boolean = false) {
 
     install(ContentNegotiation) {
         gson {
-            register(ContentType.Application.Json, GsonConverter(GsonBuilder().apply {
-                // ...
-            }.create()))
-
+            register(ContentType.Application.Json, GsonConverter(GsonBuilder().create()))
         }
     }
 
-    initDB()
-    embeddedServer(Netty, 8080) {
+    initDBConnection()
 
+    embeddedServer(Netty, 8080) {
         routing {
             get("/") {
-                call.respondText(getAllHeroes() , ContentType.Application.Json)
+                call.respondText(getAllHeroes(), ContentType.Application.Json)
             }
         }
     }.start(wait = true)
 
 }
 
+fun getAllHeroes(): String {
+    var json: String = ""
+    transaction {
+        val res = Heroes.selectAll()
+        val c = ArrayList<Hero>()
+        for (f in res) {
+            c.add(
+                Hero(
+                    id = f[Heroes.id],
+                    name = f[Heroes.name],
+                    description = f[Heroes.description],
+                    poster = f[Heroes.poster]
+                )
+            )
+        }
+        json = Gson().toJson(c);
+    }
+    return json
+}
+
+
+/**
+ * This method makes a connection to MySQL Server
+ * In this example, MySQL Server is running in the local host (so 127.0.0.1)
+ * at the standard port 3306
+ */
+fun initDBConnection() {
+    val url = "jdbc:mysql://root:root@localhost:3306/marvel_universe_db?useUnicode=true&serverTimezone=UTC"
+    val driver = "com.mysql.cj.jdbc.Driver"
+    Database.connect(url, driver)
+}
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
