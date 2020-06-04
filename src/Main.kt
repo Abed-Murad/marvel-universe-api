@@ -8,27 +8,26 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import marvel_universe_api.model.Heroes
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
-object Fruits : Table("fruits") {
+object Heroes : Table("heroes") {
     val id = integer("id").autoIncrement()
-    val name = varchar("name", length = 64)
-    val value = integer("value")
-    override val primaryKey = PrimaryKey(Fruits.id)
+    val name = varchar("name", 45)
+    val description = varchar("description", 250)
+    val poster = varchar("poster", 250)
+    override val primaryKey = PrimaryKey(Heroes.id)
 }
 
-data class Fruit(val id: Int, val name: String, val value: Int)
+data class Fruit(val id: Int, val name: String, val description: String, val poster: String)
 
 /*
     Init MySQL database connection
  */
 fun initDB() {
-    val url = "jdbc:mysql://root:root@localhost:3306/anychart_db?useUnicode=true&serverTimezone=UTC"
+    val url = "jdbc:mysql://root:root@localhost:3306/marvel_universe_db?useUnicode=true&serverTimezone=UTC"
     val driver = "com.mysql.cj.jdbc.Driver"
     Database.connect(url, driver)
 }
@@ -36,13 +35,20 @@ fun initDB() {
 /*
     Getting fruit data from database
  */
-fun getTopFruits(): String {
+fun getAllHeroes(): String {
     var json: String = ""
     transaction {
-        val res = Fruits.selectAll()
+        val res = Heroes.selectAll()
         val c = ArrayList<Fruit>()
         for (f in res) {
-            c.add(Fruit(id = f[Fruits.id], name = f[Fruits.name], value = f[Fruits.value]))
+            c.add(
+                Fruit(
+                    id = f[Heroes.id],
+                    name = f[Heroes.name],
+                    description = f[Heroes.description],
+                    poster = f[Heroes.poster]
+                )
+            )
         }
         json = Gson().toJson(c);
     }
@@ -57,7 +63,7 @@ fun main(args: Array<String>) {
     embeddedServer(Netty, 8080) {
         routing {
             get("/") {
-                call.respondText(getTopFruits(), ContentType.Text.Html)
+                call.respondText(getAllHeroes(), ContentType.Text.Html)
             }
         }
     }.start(wait = true)
