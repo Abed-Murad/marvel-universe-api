@@ -50,7 +50,7 @@ fun Application.module(testing: Boolean = false) {
             route("v1/public") {
 
                 get("/heroes") {
-                    call.respondText(getAllHeroes(), ContentType.Text.Plain)
+                    call.respondText(getAllHeroes(), ContentType.Application.Json)
                 }
 
                 get("/movies") {
@@ -66,65 +66,6 @@ fun Application.module(testing: Boolean = false) {
     }.start(wait = true)
 
 }
-
-fun getAllHeroes(): String {
-    var json: String = ""
-    transaction {
-        val res = Heroes.selectAll()
-        val c = ArrayList<Hero>()
-        for (f in res) {
-            c.add(
-                Hero(
-                    id = f[Heroes.id],
-                    name = f[Heroes.name],
-                    description = f[Heroes.description],
-                    poster = f[Heroes.poster]
-                )
-            )
-        }
-        json = Gson().toJson(c)
-    }
-    return json
-}
-
-fun getAllMovies(): String {
-    var movies: String = ""
-    transaction {
-        val res = Movies.selectAll()
-        val c = ArrayList<Movie>()
-        for (f in res) {
-            c.add(
-                Movie(
-                    id = f[Movies.id],
-                    name = f[Movies.name],
-                    releaseDate = f[Movies.releaseDate],
-                    poster = f[Movies.poster]
-                )
-            )
-        }
-        movies = Gson().toJson(c)
-    }
-    return movies
-}
-
-fun getAllHeroesMovies(): String {
-    var movies: String = ""
-    transaction {
-        val res = HeroMovies.selectAll()
-        val c = ArrayList<HeroMovie>()
-        for (f in res) {
-            c.add(
-                HeroMovie(
-                    name = f[Movies.name],
-                    poster = f[Movies.poster]
-                )
-            )
-        }
-        movies = Gson().toJson(c)
-    }
-    return movies
-}
-
 
 /**
  * This method makes a connection to MySQL Server
