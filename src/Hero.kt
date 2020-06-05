@@ -18,16 +18,15 @@ object Movies : Table("movies") {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 250)
     val poster = varchar("poster", 250)
-    val date = varchar("date", 250)
+    val releaseDate = varchar("releaseDate", 250)
     override val primaryKey = PrimaryKey(id)
 }
 
 object HeroMovies : Table("heromovies") {
-    val heroes_id = integer("id").autoIncrement()
-    val movies_id = integer("id").autoIncrement()
-    override val primaryKey = PrimaryKey( heroes_id , movies_id )
+    val name = varchar("name", 250)
+    val poster = varchar("poster", 250)
 }
 
 data class Hero(val id: Int, val name: String, val description: String, val poster: String)
-data class Movie(val id: Int, val name: String, val poster: String, val date: String)
-data class HeroMovie(val heroes_id: Int,val movies_id: Int)
+data class Movie(val id: Int, val name: String, val poster: String, val releaseDate: String)
+data class HeroMovie(val name: String, val poster: String)

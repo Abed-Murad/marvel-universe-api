@@ -18,8 +18,6 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import marvel_universe_api.HeroMovies.heroes_id
-import marvel_universe_api.HeroMovies.movies_id
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -50,8 +48,9 @@ fun Application.module(testing: Boolean = false) {
     embeddedServer(Netty, 8080) {
         routing {
             route("v1/public") {
+
                 get("/heroes") {
-                    call.respondText(getAllHeroes(), ContentType.Application.Json)
+                    call.respondText(getAllHeroes(), ContentType.Text.Plain)
                 }
 
                 get("/movies") {
@@ -59,7 +58,7 @@ fun Application.module(testing: Boolean = false) {
                 }
 
                 get("/heroes-movies") {
-                    call.respondText(getAllHeroesMovies(), ContentType.Application.Json)
+                    call.respondText(getAllHeroesMovies(), ContentType.Text.Plain)
                 }
 
             }
@@ -98,8 +97,8 @@ fun getAllMovies(): String {
                 Movie(
                     id = f[Movies.id],
                     name = f[Movies.name],
-                    date = f[Movies.date],
-                    poster = f[Heroes.poster]
+                    releaseDate = f[Movies.releaseDate],
+                    poster = f[Movies.poster]
                 )
             )
         }
@@ -116,8 +115,8 @@ fun getAllHeroesMovies(): String {
         for (f in res) {
             c.add(
                 HeroMovie(
-                    heroes_id = f[HeroMovies.heroes_id],
-                    movies_id = f[HeroMovies.movies_id]
+                    name = f[Movies.name],
+                    poster = f[Movies.poster]
                 )
             )
         }
