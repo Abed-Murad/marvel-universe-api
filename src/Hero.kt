@@ -1,8 +1,6 @@
 package marvel_universe_api
 
 import org.jetbrains.exposed.sql.Table
-import java.sql.Date
-import java.time.Instant.now
 
 
 object Heroes : Table("heroes") {
@@ -23,10 +21,10 @@ object Movies : Table("movies") {
 }
 
 object HeroMovies : Table("heromovies") {
-    val name = varchar("name", 250)
-    val poster = varchar("poster", 250)
+    val heroes_id = integer("id")
+    val movies_id = integer("id")
 }
 
 data class Hero(val id: Int, val name: String, val description: String, val poster: String)
 data class Movie(val id: Int, val name: String, val poster: String, val releaseDate: String)
-data class HeroMovie(val name: String, val poster: String)
+data class HeroMovie(val heroes_id: Int,val movies_id: Int)

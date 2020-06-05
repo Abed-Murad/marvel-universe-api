@@ -1,6 +1,5 @@
 package marvel_universe_api
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -19,9 +18,6 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.ArrayList
 
 
 @kotlin.jvm.JvmOverloads
@@ -43,7 +39,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    initDBConnection()
+//    initDBConnection()
 
     embeddedServer(Netty, 8080) {
         routing {
@@ -58,7 +54,7 @@ fun Application.module(testing: Boolean = false) {
                 }
 
                 get("/heroes-movies") {
-                    call.respondText(getAllHeroesMovies(), ContentType.Text.Plain)
+                    getAllHeroesMovies()
                 }
 
             }
