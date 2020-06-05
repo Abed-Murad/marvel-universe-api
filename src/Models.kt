@@ -31,7 +31,8 @@ data class Hero(
     val id: Int,
     val name: String,
     val description: String,
-    val poster: String
+    val poster: String,
+    var moviesList: List<Movie>? = null
 )
 
 data class Movie(

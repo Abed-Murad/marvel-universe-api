@@ -46,15 +46,14 @@ fun Application.module(testing: Boolean = false) {
                 get("/heroes") {
                     call.respondText(getAllHeroes(), ContentType.Application.Json)
                 }
+                get("/heroes/{id}") {
+                    val heroId = call.parameters["id"]!!.toInt()
+                    call.respondText(getHeroById(heroId), ContentType.Application.Json)
+                }
 
                 get("/movies") {
                     call.respondText(getAllMovies(), ContentType.Application.Json)
                 }
-
-                get("/hero-movies") {
-                    call.respondText(getHeroMovies(1), ContentType.Application.Json)
-                }
-
             }
         }
     }.start(wait = true)

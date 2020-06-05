@@ -3,6 +3,7 @@ package marvel_universe_api
 import com.google.gson.Gson
 import java.sql.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 private var conn: Connection? = null
 
@@ -28,12 +29,66 @@ fun getAllHeroes(): String {
                     name = resultset.getString("name"),
                     description = resultset.getString("description"),
                     poster = resultset.getString("poster")
-
-
                 )
             )
         }
         heroes = Gson().toJson(c)
+        return heroes
+
+    } catch (ex: SQLException) {    // handle any errors
+
+        ex.printStackTrace()
+    } finally {     // release resources
+
+        if (resultset != null) {
+            try {
+                resultset.close()
+            } catch (sqlEx: SQLException) {
+            }
+            resultset = null
+        }
+        if (stmt != null) {
+            try {
+                stmt.close()
+            } catch (sqlEx: SQLException) {
+            }
+            stmt = null
+        }
+        if (conn != null) {
+            try {
+                conn!!.close()
+            } catch (sqlEx: SQLException) {
+            }
+            conn = null
+        }
+    }
+    return ""
+}
+
+fun getHeroById(id: Int): String {
+    getConnection()
+    var stmt: Statement? = null
+    var resultset: ResultSet? = null
+    var heroes = ""
+    val query = "SELECT * FROM heroes WHERE id=$id"
+
+    try {
+        stmt = conn!!.createStatement()
+        resultset = stmt!!.executeQuery(query)
+        if (stmt.execute(query)) {
+            resultset = stmt.resultSet
+        }
+        lateinit var hero: Hero
+        while (resultset!!.next()) {
+            hero = Hero(
+                id = resultset.getInt("id"),
+                name = resultset.getString("name"),
+                description = resultset.getString("description"),
+                poster = resultset.getString("poster")
+            )
+        }
+        hero.moviesList = getHeroMovies(id)
+        heroes = Gson().toJson(hero)
         return heroes
 
     } catch (ex: SQLException) {    // handle any errors
@@ -130,13 +185,13 @@ fun getAllMovies(): String {
 }
 
 
-fun getHeroMovies(heroId: Int): String {
+fun getHeroMovies(heroId: Int): ArrayList<Movie> {
     getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
     var heroMovies = ""
     val query =
-        "SELECT movies.name,movies.poster FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE heroes.id = $heroId"
+        "SELECT movies.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE heroes.id = $heroId"
     try {
         stmt = conn!!.createStatement()
         resultset = stmt!!.executeQuery(query)
@@ -144,17 +199,21 @@ fun getHeroMovies(heroId: Int): String {
         ) {
             resultset = stmt.resultSet
         }
-        val c = ArrayList<HeroMovie>()
+        val c = ArrayList<Movie>()
         while (resultset!!.next()) {
             c.add(
-                HeroMovie(
+                Movie(
+                    id = resultset.getInt("id"),
                     name = resultset.getString("name"),
-                    poster = resultset.getString("poster")
+                    plot = resultset.getString("plot"),
+                    url = resultset.getString("url"),
+                    poster = resultset.getString("poster"),
+                    releaseDate = resultset.getString("releaseDate")
+
                 )
             )
         }
-        heroMovies = Gson().toJson(c)
-        return heroMovies
+        return c
 
     } catch (ex: SQLException) {    // handle any errors
 
@@ -183,7 +242,7 @@ fun getHeroMovies(heroId: Int): String {
             conn = null
         }
     }
-    return ""
+    return arrayListOf<Movie>()
 }
 
 /**
