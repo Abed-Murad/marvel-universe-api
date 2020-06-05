@@ -245,6 +245,64 @@ fun getHeroMovies(heroId: Int): ArrayList<Movie> {
     return arrayListOf<Movie>()
 }
 
+fun getMovieHeroes(movieId: Int): String {
+    getConnection()
+    var stmt: Statement? = null
+    var resultset: ResultSet? = null
+    var heroes:String = ""
+    val query =
+        "SELECT heroes.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE movies.id = $movieId"
+    try {
+        stmt = conn!!.createStatement()
+        resultset = stmt!!.executeQuery(query)
+        if (stmt.execute(query)
+        ) {
+            resultset = stmt.resultSet
+        }
+        val c = ArrayList<Hero>()
+        while (resultset!!.next()) {
+            c.add(
+                Hero(
+                    id = resultset.getInt("id"),
+                    name = resultset.getString("name"),
+                    description = resultset.getString("description"),
+                    poster = resultset.getString("poster")
+                )
+            )
+        }
+        heroes = Gson().toJson(c)
+        return heroes
+
+    } catch (ex: SQLException) {    // handle any errors
+
+        ex.printStackTrace()
+    } finally {     // release resources
+
+        if (resultset != null) {
+            try {
+                resultset.close()
+            } catch (sqlEx: SQLException) {
+            }
+            resultset = null
+        }
+        if (stmt != null) {
+            try {
+                stmt.close()
+            } catch (sqlEx: SQLException) {
+            }
+            stmt = null
+        }
+        if (conn != null) {
+            try {
+                conn!!.close()
+            } catch (sqlEx: SQLException) {
+            }
+            conn = null
+        }
+    }
+    return ""
+}
+
 /**
  * This method makes a connection to MySQL Server
  * In this example, MySQL Server is running in the local host (so 127.0.0.1)

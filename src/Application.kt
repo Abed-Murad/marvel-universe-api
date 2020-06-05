@@ -1,5 +1,6 @@
 package marvel_universe_api
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -50,10 +51,20 @@ fun Application.module(testing: Boolean = false) {
                     val heroId = call.parameters["id"]!!.toInt()
                     call.respondText(getHeroById(heroId), ContentType.Application.Json)
                 }
+                get("/heroes/{id}/movies") {
+                    val heroId = call.parameters["id"]!!.toInt()
+                    call.respondText(Gson().toJson(getHeroMovies(heroId)), ContentType.Application.Json)
+                }
 
                 get("/movies") {
                     call.respondText(getAllMovies(), ContentType.Application.Json)
                 }
+
+                get("/movies/{id}/heroes") {
+                    val movieId = call.parameters["id"]!!.toInt()
+                    call.respondText(getMovieHeroes(movieId), ContentType.Application.Json)
+                }
+
             }
         }
     }.start(wait = true)

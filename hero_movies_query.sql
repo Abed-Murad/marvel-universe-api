@@ -9,8 +9,11 @@
 -- SELECT heroes.id, heroes.name , heroes.description, heroes.poster FROM heroes 
 -- INNER JOIN heromovies ON heroes.id=heromovies.heroes_id;
 
-SELECT movies.name , movies.poster
-FROM movies 
-INNER JOIN heromovies ON movies.id=heromovies.movies_id
-INNER JOIN heroes ON heromovies.heroes_id=heroes.id
-where heroes.id = 1
+-- SELECT heroes.*
+-- FROM movies 
+-- INNER JOIN heromovies ON movies.id=heromovies.movies_id
+-- INNER JOIN heroes ON heromovies.heroes_id=heroes.id
+-- where movies.id = 1
+
+SELECT heroes.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id 
+INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE movies.id = 2
