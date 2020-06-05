@@ -1,10 +1,12 @@
 package marvel_universe_api
 
 import com.google.gson.Gson
+import com.mysql.cj.log.Log
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 import java.util.*
+import java.util.logging.Logger
 
 private var conn: Connection? = null
 
@@ -53,31 +55,46 @@ fun getAllHeroesMovies() {
     executeMySQLQuery()
 }
 
-private fun executeMySQLQuery() {
+ fun executeMySQLQuery(): String {
     var stmt: Statement? = null
     var resultset: ResultSet? = null
+    var heroMovies: String = ""
     try {
         stmt = conn!!.createStatement()
-        resultset = stmt!!.executeQuery("SELECT movies.name , movies.poster\n" +
-                "FROM movies \n" +
-                "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
-                "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
-                "where heroes.id = 1")
-        if (stmt.execute("SELECT movies.name , movies.poster\n" +
+        resultset = stmt!!.executeQuery(
+            "SELECT movies.name , movies.poster\n" +
                     "FROM movies \n" +
                     "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
                     "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
-                    "where heroes.id = 1")) {
+                    "where heroes.id = 1"
+        )
+        if (stmt.execute(
+                "SELECT movies.name , movies.poster\n" +
+                        "FROM movies \n" +
+                        "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
+                        "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
+                        "where heroes.id = 1"
+            )
+        ) {
             resultset = stmt.resultSet
         }
+        val c = ArrayList<HeroMovie>()
         while (resultset!!.next()) {
-            println(resultset.getString("name"))
+            c.add(
+                HeroMovie(
+                    name = resultset.getString("name"),
+                    poster = resultset.getString("poster")
+                )
+            )
         }
-    } catch (ex: SQLException) {
-        // handle any errors
+        heroMovies = Gson().toJson(c)
+        return heroMovies
+
+    } catch (ex: SQLException) {    // handle any errors
+
         ex.printStackTrace()
-    } finally {
-        // release resources
+    } finally {     // release resources
+
         if (resultset != null) {
             try {
                 resultset.close()
@@ -100,6 +117,7 @@ private fun executeMySQLQuery() {
             conn = null
         }
     }
+    return ""
 }
 
 /**
@@ -107,13 +125,16 @@ private fun executeMySQLQuery() {
  * In this example, MySQL Server is running in the local host (so 127.0.0.1)
  * at the standard port 3306
  */
-private fun getConnection() {
+ fun getConnection() {
     val connectionProps = Properties()
     connectionProps["user"] = "root"
     connectionProps["password"] = "root"
     try {
         Class.forName("com.mysql.jdbc.Driver").newInstance()
-        conn = DriverManager.getConnection("jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC&", connectionProps)
+        conn = DriverManager.getConnection(
+            "jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC&",
+            connectionProps
+        )
     } catch (ex: SQLException) {
         // handle any errors
         ex.printStackTrace()

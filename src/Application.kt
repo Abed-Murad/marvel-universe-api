@@ -53,8 +53,9 @@ fun Application.module(testing: Boolean = false) {
                     call.respondText(getAllMovies(), ContentType.Application.Json)
                 }
 
-                get("/heroes-movies") {
-                    getAllHeroesMovies()
+                get("/hero-movies") {
+                    getConnection()
+                    call.respondText(executeMySQLQuery(), ContentType.Application.Json)
                 }
 
             }

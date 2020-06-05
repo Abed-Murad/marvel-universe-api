@@ -27,4 +27,4 @@ object HeroMovies : Table("heromovies") {
 
 data class Hero(val id: Int, val name: String, val description: String, val poster: String)
 data class Movie(val id: Int, val name: String, val poster: String, val releaseDate: String)
-data class HeroMovie(val heroes_id: Int,val movies_id: Int)
+data class HeroMovie(val name: String,val poster: String)
