@@ -39,7 +39,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-//    initDBConnection()
+    getConnection()
 
     embeddedServer(Netty, 8080) {
         routing {
@@ -54,7 +54,6 @@ fun Application.module(testing: Boolean = false) {
                 }
 
                 get("/hero-movies") {
-                    getConnection()
                     call.respondText(executeMySQLQuery(), ContentType.Application.Json)
                 }
 
