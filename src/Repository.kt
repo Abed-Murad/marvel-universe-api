@@ -1,17 +1,15 @@
 package marvel_universe_api
 
 import com.google.gson.Gson
-import com.mysql.cj.log.Log
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 import java.util.*
-import java.util.logging.Logger
 
 private var conn: Connection? = null
 
 fun getAllHeroes(): String {
-    var json: String = ""
+    var json = ""
     transaction {
         val res = Heroes.selectAll()
         val c = ArrayList<Hero>()
@@ -31,7 +29,7 @@ fun getAllHeroes(): String {
 }
 
 fun getAllMovies(): String {
-    var movies: String = ""
+    var movies = ""
     transaction {
         val res = Movies.selectAll()
         val c = ArrayList<Movie>()
@@ -50,31 +48,20 @@ fun getAllMovies(): String {
     return movies
 }
 
-fun getAllHeroesMovies() {
-    getConnection()
-    executeMySQLQuery()
-}
 
- fun executeMySQLQuery(): String {
+fun executeMySQLQuery(): String {
     var stmt: Statement? = null
     var resultset: ResultSet? = null
-    var heroMovies: String = ""
+    var heroMovies = ""
+    val query = "SELECT movies.name , movies.poster\n" +
+            "FROM movies \n" +
+            "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
+            "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
+            "where heroes.id = 1"
     try {
         stmt = conn!!.createStatement()
-        resultset = stmt!!.executeQuery(
-            "SELECT movies.name , movies.poster\n" +
-                    "FROM movies \n" +
-                    "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
-                    "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
-                    "where heroes.id = 1"
-        )
-        if (stmt.execute(
-                "SELECT movies.name , movies.poster\n" +
-                        "FROM movies \n" +
-                        "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
-                        "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
-                        "where heroes.id = 1"
-            )
+        resultset = stmt!!.executeQuery(query)
+        if (stmt.execute(query)
         ) {
             resultset = stmt.resultSet
         }
@@ -125,7 +112,7 @@ fun getAllHeroesMovies() {
  * In this example, MySQL Server is running in the local host (so 127.0.0.1)
  * at the standard port 3306
  */
- fun getConnection() {
+fun getConnection() {
     val connectionProps = Properties()
     connectionProps["user"] = "root"
     connectionProps["password"] = "root"
