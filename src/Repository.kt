@@ -28,6 +28,7 @@ fun getAllHeroes(): String {
                     id = resultset.getInt("id"),
                     name = resultset.getString("name"),
                     description = resultset.getString("description"),
+                    thumbnail = resultset.getString("thumbnail"),
                     poster = resultset.getString("poster")
                 )
             )
@@ -84,7 +85,8 @@ fun getHeroById(id: Int): String {
                 id = resultset.getInt("id"),
                 name = resultset.getString("name"),
                 description = resultset.getString("description"),
-                poster = resultset.getString("poster")
+                poster = resultset.getString("poster"),
+                thumbnail = resultset.getString("thumbnail")
             )
         }
         hero.moviesList = getHeroMovies(id)
@@ -249,7 +251,7 @@ fun getMovieHeroes(movieId: Int): String {
     getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
-    var heroes:String = ""
+    var heroes: String = ""
     val query =
         "SELECT heroes.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE movies.id = $movieId"
     try {
@@ -265,8 +267,9 @@ fun getMovieHeroes(movieId: Int): String {
                 Hero(
                     id = resultset.getInt("id"),
                     name = resultset.getString("name"),
-                    description = resultset.getString("description"),
-                    poster = resultset.getString("poster")
+                    poster = resultset.getString("poster"),
+                    thumbnail = resultset.getString("thumbnail"),
+                    description = resultset.getString("description")
                 )
             )
         }

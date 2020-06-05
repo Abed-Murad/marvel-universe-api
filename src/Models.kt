@@ -8,6 +8,7 @@ object Heroes : Table("heroes") {
     val name = varchar("name", 45)
     val description = varchar("description", 250)
     val poster = varchar("poster", 250)
+    val thumbnail = varchar("thumbnail", 500)
     override val primaryKey = PrimaryKey(id)
 }
 
@@ -32,6 +33,7 @@ data class Hero(
     val name: String,
     val description: String,
     val poster: String,
+    val thumbnail: String,
     var moviesList: List<Movie>? = null
 )
 
