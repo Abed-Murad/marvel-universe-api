@@ -18,11 +18,11 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.jetbrains.exposed.sql.Database
 
 
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+    //Cross-Origin Resource Sharing
     install(CORS) {
         method(HttpMethod.Options)
         method(HttpMethod.Put)
@@ -34,12 +34,14 @@ fun Application.module(testing: Boolean = false) {
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
 
+    //The ContentNegotiation feature allows you to register and configure custom converters.
     install(ContentNegotiation) {
         gson {
             register(ContentType.Application.Json, GsonConverter(GsonBuilder().create()))
         }
     }
 
+    //embeddedServer is a simple way to start a Ktor application
     embeddedServer(Netty, 8080) {
         routing {
             route("v1/public") {
@@ -68,18 +70,8 @@ fun Application.module(testing: Boolean = false) {
             }
         }
     }.start(wait = true)
-
 }
 
-/**
- * This method makes a connection to MySQL Server
- * In this example, MySQL Server is running in the local host (so 127.0.0.1)
- * at the standard port 3306
- */
-fun initDBConnection() {
-    val url = "jdbc:mysql://root:root@localhost:3306/marvel_universe_db?useUnicode=true&serverTimezone=UTC"
-    val driver = "com.mysql.cj.jdbc.Driver"
-    Database.connect(url, driver)
-}
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)

@@ -1,6 +1,8 @@
 package marvel_universe_api
 
 import com.google.gson.Gson
+import marvel_universe_api.model.Hero
+import marvel_universe_api.model.Movie
 import java.sql.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -11,7 +13,7 @@ fun getAllHeroes(): String {
     getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
-    var heroes = ""
+    val heroes: String
     val query = "SELECT * FROM heroes"
 
     try {
@@ -35,90 +37,10 @@ fun getAllHeroes(): String {
         }
         heroes = Gson().toJson(c)
         return heroes
-
-    } catch (ex: SQLException) {    // handle any errors
-
+    } catch (ex: SQLException) {
         ex.printStackTrace()
-    } finally {     // release resources
-
-        if (resultset != null) {
-            try {
-                resultset.close()
-            } catch (sqlEx: SQLException) {
-            }
-            resultset = null
-        }
-        if (stmt != null) {
-            try {
-                stmt.close()
-            } catch (sqlEx: SQLException) {
-            }
-            stmt = null
-        }
-        if (conn != null) {
-            try {
-                conn!!.close()
-            } catch (sqlEx: SQLException) {
-            }
-            conn = null
-        }
-    }
-    return ""
-}
-
-fun getHeroById(id: Int): String {
-    getConnection()
-    var stmt: Statement? = null
-    var resultset: ResultSet? = null
-    var heroes = ""
-    val query = "SELECT * FROM heroes WHERE id=$id"
-
-    try {
-        stmt = conn!!.createStatement()
-        resultset = stmt!!.executeQuery(query)
-        if (stmt.execute(query)) {
-            resultset = stmt.resultSet
-        }
-        lateinit var hero: Hero
-        while (resultset!!.next()) {
-            hero = Hero(
-                id = resultset.getInt("id"),
-                name = resultset.getString("name"),
-                description = resultset.getString("description"),
-                poster = resultset.getString("poster"),
-                thumbnail = resultset.getString("thumbnail")
-            )
-        }
-        hero.moviesList = getHeroMovies(id)
-        heroes = Gson().toJson(hero)
-        return heroes
-
-    } catch (ex: SQLException) {    // handle any errors
-
-        ex.printStackTrace()
-    } finally {     // release resources
-
-        if (resultset != null) {
-            try {
-                resultset.close()
-            } catch (sqlEx: SQLException) {
-            }
-            resultset = null
-        }
-        if (stmt != null) {
-            try {
-                stmt.close()
-            } catch (sqlEx: SQLException) {
-            }
-            stmt = null
-        }
-        if (conn != null) {
-            try {
-                conn!!.close()
-            } catch (sqlEx: SQLException) {
-            }
-            conn = null
-        }
+    } finally {
+        releaseResources(resultset, stmt)
     }
     return ""
 }
@@ -127,7 +49,7 @@ fun getAllMovies(): String {
     getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
-    var movies = ""
+    val movies: String
     val query = "SELECT * FROM movies"
 
     try {
@@ -153,45 +75,54 @@ fun getAllMovies(): String {
         }
         movies = Gson().toJson(c)
         return movies
-
-    } catch (ex: SQLException) {    // handle any errors
-
+    } catch (ex: SQLException) {
         ex.printStackTrace()
-    } finally {     // release resources
-
-        if (resultset != null) {
-            try {
-                resultset.close()
-            } catch (sqlEx: SQLException) {
-            }
-            resultset = null
-        }
-        if (stmt != null) {
-            try {
-                stmt.close()
-            } catch (sqlEx: SQLException) {
-            }
-            stmt = null
-        }
-        if (conn != null) {
-            try {
-                conn!!.close()
-            } catch (sqlEx: SQLException) {
-            }
-            conn = null
-        }
+    } finally {
+        releaseResources(resultset, stmt)
     }
     return ""
 
 
 }
 
+fun getHeroById(id: Int): String {
+    getConnection()
+    var stmt: Statement? = null
+    var resultset: ResultSet? = null
+    val heroes: String
+    val query = "SELECT * FROM heroes WHERE id=$id"
+
+    try {
+        stmt = conn!!.createStatement()
+        resultset = stmt!!.executeQuery(query)
+        if (stmt.execute(query)) {
+            resultset = stmt.resultSet
+        }
+        lateinit var hero: Hero
+        while (resultset!!.next()) {
+            hero = Hero(
+                id = resultset.getInt("id"),
+                name = resultset.getString("name"),
+                description = resultset.getString("description"),
+                poster = resultset.getString("poster"),
+                thumbnail = resultset.getString("thumbnail")
+            )
+        }
+        hero.moviesList = getHeroMovies(id)
+        heroes = Gson().toJson(hero)
+        return heroes
+    } catch (ex: SQLException) {
+        ex.printStackTrace()
+    } finally {
+        releaseResources(resultset, stmt)
+    }
+    return ""
+}
 
 fun getHeroMovies(heroId: Int): ArrayList<Movie> {
     getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
-    var heroMovies = ""
     val query =
         "SELECT movies.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE heroes.id = $heroId"
     try {
@@ -216,35 +147,12 @@ fun getHeroMovies(heroId: Int): ArrayList<Movie> {
             )
         }
         return c
-
-    } catch (ex: SQLException) {    // handle any errors
-
+    } catch (ex: SQLException) {
         ex.printStackTrace()
-    } finally {     // release resources
-
-        if (resultset != null) {
-            try {
-                resultset.close()
-            } catch (sqlEx: SQLException) {
-            }
-            resultset = null
-        }
-        if (stmt != null) {
-            try {
-                stmt.close()
-            } catch (sqlEx: SQLException) {
-            }
-            stmt = null
-        }
-        if (conn != null) {
-            try {
-                conn!!.close()
-            } catch (sqlEx: SQLException) {
-            }
-            conn = null
-        }
+    } finally {
+        releaseResources(resultset, stmt)
     }
-    return arrayListOf<Movie>()
+    return arrayListOf()
 }
 
 fun getMovieHeroes(movieId: Int): String {
@@ -257,8 +165,7 @@ fun getMovieHeroes(movieId: Int): String {
     try {
         stmt = conn!!.createStatement()
         resultset = stmt!!.executeQuery(query)
-        if (stmt.execute(query)
-        ) {
+        if (stmt.execute(query)) {
             resultset = stmt.resultSet
         }
         val c = ArrayList<Hero>()
@@ -275,35 +182,37 @@ fun getMovieHeroes(movieId: Int): String {
         }
         heroes = Gson().toJson(c)
         return heroes
-
-    } catch (ex: SQLException) {    // handle any errors
-
+    } catch (ex: SQLException) {
         ex.printStackTrace()
-    } finally {     // release resources
-
-        if (resultset != null) {
-            try {
-                resultset.close()
-            } catch (sqlEx: SQLException) {
-            }
-            resultset = null
-        }
-        if (stmt != null) {
-            try {
-                stmt.close()
-            } catch (sqlEx: SQLException) {
-            }
-            stmt = null
-        }
-        if (conn != null) {
-            try {
-                conn!!.close()
-            } catch (sqlEx: SQLException) {
-            }
-            conn = null
-        }
+    } finally {
+        releaseResources(resultset, stmt)
     }
     return ""
+}
+
+private fun releaseResources(resultSet: ResultSet?, stmt: Statement?) {
+    if (resultSet != null) {
+        try {
+            resultSet.close()
+        } catch (sqlEx: SQLException) {
+            sqlEx.printStackTrace()
+        }
+    }
+    if (stmt != null) {
+        try {
+            stmt.close()
+        } catch (sqlEx: SQLException) {
+            sqlEx.printStackTrace()
+        }
+    }
+    if (conn != null) {
+        try {
+            conn!!.close()
+        } catch (sqlEx: SQLException) {
+            sqlEx.printStackTrace()
+        }
+        conn = null
+    }
 }
 
 /**
@@ -311,7 +220,7 @@ fun getMovieHeroes(movieId: Int): String {
  * In this example, MySQL Server is running in the local host (so 127.0.0.1)
  * at the standard port 3306
  */
-fun getConnection() {
+private fun getConnection() {
     val connectionProps = Properties()
     connectionProps["user"] = "root"
     connectionProps["password"] = "root"
@@ -322,10 +231,8 @@ fun getConnection() {
             connectionProps
         )
     } catch (ex: SQLException) {
-        // handle any errors
         ex.printStackTrace()
     } catch (ex: Exception) {
-        // handle any errors
         ex.printStackTrace()
     }
 }
