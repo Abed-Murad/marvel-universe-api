@@ -54,7 +54,7 @@ fun Application.module(testing: Boolean = false) {
                 }
 
                 get("/hero-movies") {
-                    call.respondText(executeMySQLQuery(), ContentType.Application.Json)
+                    call.respondText(getHeroMovies(1), ContentType.Application.Json)
                 }
 
             }

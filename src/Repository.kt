@@ -68,32 +68,74 @@ fun getAllHeroes(): String {
 }
 
 fun getAllMovies(): String {
+    var stmt: Statement? = null
+    var resultset: ResultSet? = null
     var movies = ""
-    transaction {
-        val res = Movies.selectAll()
+    val query = "SELECT * FROM movies"
+
+    try {
+        stmt = conn!!.createStatement()
+        resultset = stmt!!.executeQuery(query)
+        if (stmt.execute(query)
+        ) {
+            resultset = stmt.resultSet
+        }
         val c = ArrayList<Movie>()
-        for (f in res) {
+        while (resultset!!.next()) {
             c.add(
                 Movie(
-                    id = f[Movies.id],
-                    name = f[Movies.name],
-                    url = f[Movies.url],
-                    releaseDate = f[Movies.releaseDate],
-                    poster = f[Movies.poster]
+                    id = resultset.getInt("id"),
+                    name = resultset.getString("name"),
+                    plot = resultset.getString("plot"),
+                    url = resultset.getString("url"),
+                    poster = resultset.getString("poster"),
+                    releaseDate = resultset.getString("releaseDate")
+
                 )
             )
         }
         movies = Gson().toJson(c)
+        return movies
+
+    } catch (ex: SQLException) {    // handle any errors
+
+        ex.printStackTrace()
+    } finally {     // release resources
+
+        if (resultset != null) {
+            try {
+                resultset.close()
+            } catch (sqlEx: SQLException) {
+            }
+            resultset = null
+        }
+        if (stmt != null) {
+            try {
+                stmt.close()
+            } catch (sqlEx: SQLException) {
+            }
+            stmt = null
+        }
+        if (conn != null) {
+            try {
+                conn!!.close()
+            } catch (sqlEx: SQLException) {
+            }
+            conn = null
+        }
     }
-    return movies
+    return ""
+
+
 }
 
 
-fun executeMySQLQuery(): String {
+fun getHeroMovies(heroId: Int): String {
     var stmt: Statement? = null
     var resultset: ResultSet? = null
     var heroMovies = ""
-    val query = "SELECT movies.name,movies.poster FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE heroes.id = 1"
+    val query =
+        "SELECT movies.name,movies.poster FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE heroes.id = $heroId"
     try {
         stmt = conn!!.createStatement()
         resultset = stmt!!.executeQuery(query)
@@ -155,7 +197,7 @@ fun getConnection() {
     try {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance()
         conn = DriverManager.getConnection(
-            "jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC&",
+            "jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC",
             connectionProps
         )
     } catch (ex: SQLException) {
