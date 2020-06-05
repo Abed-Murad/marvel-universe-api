@@ -58,12 +58,20 @@ private fun executeMySQLQuery() {
     var resultset: ResultSet? = null
     try {
         stmt = conn!!.createStatement()
-        resultset = stmt!!.executeQuery("SHOW DATABASES;")
-        if (stmt.execute("SHOW DATABASES;")) {
+        resultset = stmt!!.executeQuery("SELECT movies.name , movies.poster\n" +
+                "FROM movies \n" +
+                "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
+                "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
+                "where heroes.id = 1")
+        if (stmt.execute("SELECT movies.name , movies.poster\n" +
+                    "FROM movies \n" +
+                    "INNER JOIN heromovies ON movies.id=heromovies.movies_id\n" +
+                    "INNER JOIN heroes ON heromovies.heroes_id=heroes.id\n" +
+                    "where heroes.id = 1")) {
             resultset = stmt.resultSet
         }
         while (resultset!!.next()) {
-            println(resultset.getString("Database"))
+            println(resultset.getString("name"))
         }
     } catch (ex: SQLException) {
         // handle any errors
@@ -105,7 +113,7 @@ private fun getConnection() {
     connectionProps["password"] = "root"
     try {
         Class.forName("com.mysql.jdbc.Driver").newInstance()
-        conn = DriverManager.getConnection("jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/?" + "useUnicode=true&serverTimezone=UTC&", connectionProps)
+        conn = DriverManager.getConnection("jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC&", connectionProps)
     } catch (ex: SQLException) {
         // handle any errors
         ex.printStackTrace()
