@@ -39,8 +39,6 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    getConnection()
-
     embeddedServer(Netty, 8080) {
         routing {
             route("v1/public") {

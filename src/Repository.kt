@@ -1,14 +1,13 @@
 package marvel_universe_api
 
 import com.google.gson.Gson
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 import java.util.*
 
 private var conn: Connection? = null
 
 fun getAllHeroes(): String {
+    getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
     var heroes = ""
@@ -68,6 +67,7 @@ fun getAllHeroes(): String {
 }
 
 fun getAllMovies(): String {
+    getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
     var movies = ""
@@ -131,6 +131,7 @@ fun getAllMovies(): String {
 
 
 fun getHeroMovies(heroId: Int): String {
+    getConnection()
     var stmt: Statement? = null
     var resultset: ResultSet? = null
     var heroMovies = ""
