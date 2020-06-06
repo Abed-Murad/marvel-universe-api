@@ -10,19 +10,35 @@ import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test
-    fun testRequests() = withTestApplication(Application::module) {
+    fun testHeroesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes")) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
-        with(handleRequest(HttpMethod.Get, "/v1/public/heroes/2")) {
-            assertEquals(HttpStatusCode.OK, response.status())
-        }
+    }
+
+    @Test
+    fun testMoviesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes/1/movies")) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
-        with(handleRequest(HttpMethod.Get, "/v1/public/movies")) {
+    }
+
+    @Test
+    fun testHeroMoviesRequest() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "/v1/public/heroes/1/movies")) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
+    }
+
+    @Test
+    fun testGetHeroByIdRequest() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "/v1/public/heroes/2")) {
+            assertEquals(HttpStatusCode.OK, response.status())
+        }
+    }
+
+    @Test
+    fun testMovieHeroesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/movies/1/heroes")) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
