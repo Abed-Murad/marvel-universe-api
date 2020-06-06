@@ -6,7 +6,9 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CORS
+import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
 import io.ktor.gson.GsonConverter
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
@@ -20,8 +22,11 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
 
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+fun Application.module() {
+
+    install(DefaultHeaders)
+    install(CallLogging)
+
     //Cross-Origin Resource Sharing
     install(CORS) {
         method(HttpMethod.Options)
@@ -41,37 +46,41 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    //embeddedServer is a simple way to start a Ktor application
-    embeddedServer(Netty, 8080) {
-        routing {
-            route("v1/public") {
+    routing {
+        route("v1/public") {
 
-                get("/heroes") {
-                    call.respondText(getAllHeroes(), ContentType.Application.Json)
-                }
-                get("/heroes/{id}") {
-                    val heroId = call.parameters["id"]!!.toInt()
-                    call.respondText(getHeroById(heroId), ContentType.Application.Json)
-                }
-                get("/heroes/{id}/movies") {
-                    val heroId = call.parameters["id"]!!.toInt()
-                    call.respondText(Gson().toJson(getHeroMovies(heroId)), ContentType.Application.Json)
-                }
+            get("/heroes") {
+                call.respondText(getAllHeroes(), ContentType.Application.Json)
+            }
+            get("/heroes/{id}") {
+                val heroId = call.parameters["id"]!!.toInt()
+                call.respondText(getHeroById(heroId), ContentType.Application.Json)
+            }
+            get("/heroes/{id}/movies") {
+                val heroId = call.parameters["id"]!!.toInt()
+                call.respondText(Gson().toJson(getHeroMovies(heroId)), ContentType.Application.Json)
+            }
 
-                get("/movies") {
-                    call.respondText(getAllMovies(), ContentType.Application.Json)
-                }
+            get("/movies") {
+                call.respondText(getAllMovies(), ContentType.Application.Json)
+            }
 
-                get("/movies/{id}/heroes") {
-                    val movieId = call.parameters["id"]!!.toInt()
-                    call.respondText(getMovieHeroes(movieId), ContentType.Application.Json)
-                }
-
+            get("/movies/{id}/heroes") {
+                val movieId = call.parameters["id"]!!.toInt()
+                call.respondText(getMovieHeroes(movieId), ContentType.Application.Json)
             }
         }
-    }.start(wait = true)
+    }
+
+}
+
+fun main() {
+    //embeddedServer is a simple way to start a Ktor application
+    embeddedServer(
+        Netty, watchPaths = listOf("solutions/exercise4"), port = 8080,
+        // GOOD!, it will work
+        module = Application::module
+    ).start(true)
 }
 
 
-
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
