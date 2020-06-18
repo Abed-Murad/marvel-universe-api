@@ -1,4 +1,4 @@
-package marvel_universe_api.model
+package com.am.model
 
 import org.jetbrains.exposed.sql.Table
 

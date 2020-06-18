@@ -1,10 +1,8 @@
-package marvel_universe_api
+package com.am
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
+import io.ktor.application.*
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -14,16 +12,16 @@ import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.response.respondText
+import io.ktor.response.*
+import io.ktor.request.*
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 
+fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
 
+@Suppress("unused") // Referenced in application.conf
 fun Application.module() {
-
     install(DefaultHeaders)
     install(CallLogging)
 
@@ -73,14 +71,4 @@ fun Application.module() {
     }
 
 }
-
-fun main() {
-    //embeddedServer is a simple way to start a Ktor application
-    embeddedServer(
-        Netty, watchPaths = listOf("solutions/exercise4"), port = 8080,
-        // GOOD!, it will work
-        module = Application::module
-    ).start(true)
-}
-
 

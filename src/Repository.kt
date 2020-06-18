@@ -1,8 +1,8 @@
-package marvel_universe_api
+package com.am
 
 import com.google.gson.Gson
-import marvel_universe_api.model.Hero
-import marvel_universe_api.model.Movie
+import com.am.model.Hero
+import com.am.model.Movie
 import java.sql.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -227,7 +227,7 @@ private fun getConnection() {
     try {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance()
         conn = DriverManager.getConnection(
-            "jdbc:" + "mysql" + "://" + "127.0.0.1" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC",
+            "jdbc:" + "mysql" + "://" + "34.65.97.122" + ":" + "3306" + "/marvel_universe_db?" + "useUnicode=true&serverTimezone=UTC",
             connectionProps
         )
     } catch (ex: SQLException) {

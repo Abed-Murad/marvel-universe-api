@@ -15,5 +15,5 @@
 -- INNER JOIN heroes ON heromovies.heroes_id=heroes.id
 -- where movies.id = 1
 
-SELECT heroes.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id 
-INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE movies.id = 2
+-- SELECT heroes.* FROM movies INNER JOIN heromovies ON movies.id=heromovies.movies_id
+-- INNER JOIN heroes ON heromovies.heroes_id=heroes.id WHERE movies.id = 2
