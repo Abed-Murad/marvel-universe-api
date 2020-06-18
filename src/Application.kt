@@ -46,6 +46,9 @@ fun Application.module() {
 
     routing {
         route("v1/public") {
+            get("/") {
+                call.respondText("Hello World:V1", ContentType.Text.Plain)
+            }
 
             get("/heroes") {
                 call.respondText(getAllHeroes(), ContentType.Application.Json)
