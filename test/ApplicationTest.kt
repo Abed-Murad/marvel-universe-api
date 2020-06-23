@@ -14,8 +14,6 @@ class ApplicationTest {
     fun testHeroesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes")) {
             assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(1, 1)
-
         }
     }
 
@@ -23,8 +21,6 @@ class ApplicationTest {
     fun testMoviesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes/1/movies")) {
             assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(1, 1)
-
         }
     }
 
@@ -32,8 +28,6 @@ class ApplicationTest {
     fun testHeroMoviesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes/1/movies")) {
             assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(1, 1)
-
         }
     }
 
@@ -41,8 +35,6 @@ class ApplicationTest {
     fun testGetHeroByIdRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/heroes/2")) {
             assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(1, 1)
-
         }
     }
 
@@ -50,8 +42,6 @@ class ApplicationTest {
     fun testMovieHeroesRequest() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "/v1/public/movies/1/heroes")) {
             assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(1, 1)
-
         }
     }
 }

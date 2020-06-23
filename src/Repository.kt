@@ -1,11 +1,12 @@
 package com.am
 
-import com.google.gson.Gson
 import com.am.model.Hero
 import com.am.model.Movie
+import com.google.gson.Gson
 import java.sql.*
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 private var conn: Connection? = null
 

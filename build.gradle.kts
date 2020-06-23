@@ -57,6 +57,9 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.20")
     implementation("org.jetbrains.exposed:exposed-core:0.23.1")
 
+    implementation ("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.0.16")
+
+
 
     testImplementation("io.ktor:ktor-server-tests:$versionKtor")
 }
@@ -89,6 +92,7 @@ tasks {
         }
     }
 
+
     // because we're using shadowJar, this task has limited value
     named("jar") {
         enabled = false
@@ -98,6 +102,10 @@ tasks {
     named("assemble") {
         dependsOn(shadowJarTask)
     }
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 configure<AppEngineAppYamlExtension> {
